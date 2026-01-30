@@ -7,6 +7,12 @@
 #include "paging.h" 
 #include "proc.h" 
 #include "syscall.h"
+#include "drivers/pic.h" 
+#include "drivers/timer.h" 
+#include "drivers/keyboard.h" 
+#include "drivers/vga.h" 
+#include "drivers/pci.h" 
+#include "drivers/net.h"
 
 // Write a character to VGA text mode memory
 static void putc(int row, int col, char c) {
@@ -22,7 +28,7 @@ void kmain(void) {
     paging_init();
     idt_init();
     pic_remap();
-
+    tss_ini(0x9FFFF0);
     sched_init();
     syscall_init();
 
@@ -37,6 +43,8 @@ void kmain(void) {
     extern void task_b(void);
     proc_spawn(task_a);
     proc_spawn(task_b);
+    
+    net_init();
 
     for (;;)
         __asm__ volatile ("hlt");
