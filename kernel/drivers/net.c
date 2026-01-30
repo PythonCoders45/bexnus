@@ -23,4 +23,4 @@ int net_send_raw(const uint8_t *data, int len) {
 
 int net_poll_raw(uint8_t *buf, int max_len) {
     return rtl8139_poll(buf, max_len);
-}
+
