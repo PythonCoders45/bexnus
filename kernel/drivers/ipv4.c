@@ -3,6 +3,8 @@
 #include "arp.h"
 #include "../drivers/vga.h"
 #include <string.h>
+#include "udp.h"
+
 
 static uint32_t our_ip = 0;
 
@@ -75,5 +77,19 @@ void ipv4_handle(const uint8_t *frame, int len) {
     if (ip->protocol == IP_PROTO_ICMP) {
         extern void icmp_handle(const uint8_t *packet, int len);
         icmp_handle((const uint8_t*)ip, len - 14);
+    }
+}
+
+void ipv4_handle(const uint8_t *frame, int len) {
+    const struct eth_frame *eth = (const struct eth_frame*)frame;
+    const struct ipv4_header *ip = (const struct ipv4_header*)eth->payload;
+
+    if (ip->dst != our_ip) return;
+
+    if (ip->protocol == IP_PROTO_ICMP) {
+        extern void icmp_handle(const uint8_t *packet, int len);
+        icmp_handle((const uint8_t*)ip, len - 14);
+    } else if (ip->protocol == IP_PROTO_UDP) {
+        udp_handle((const uint8_t*)ip, len - 14);
     }
 }
