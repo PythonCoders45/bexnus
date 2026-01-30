@@ -114,3 +114,12 @@ int arp_resolve(uint32_t ip, uint8_t mac_out[6]) {
 
     return -1;
 }
+
+int arp_dump_entry(int index, uint32_t *ip, uint8_t mac[6]) {
+    if (index < 0 || index >= ARP_CACHE_SIZE) return -1;
+    if (cache[index].ip == 0) return -1;
+
+    *ip = cache[index].ip;
+    memcpy(mac, cache[index].mac, 6);
+    return 0;
+}

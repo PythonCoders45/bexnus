@@ -7,6 +7,11 @@
 #define RTL_VENDOR_ID 0x10EC
 #define RTL_DEVICE_ID 0x8139
 
+uint8_t rtl8139_mac[6];
+
+for (int i = 0; i < 6; i++)
+    rtl8139_mac[i] = inb16(io_base + 0x00 + i);
+
 static uint16_t io_base;
 static uint8_t  mac[6];
 

@@ -17,6 +17,7 @@ struct command_entry command_table[] = {
 
     // process / system
     { "run",   cmd_run },
+    { "netinfo", cmd_netinfo },
 
     // networking
     { "ping",  cmd_ping },
