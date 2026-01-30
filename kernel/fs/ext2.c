@@ -125,3 +125,37 @@ int ext2_read_file(const char *path, uint8_t *buf, int max) {
 
     return pos;
 }
+
+static void write_block(uint32_t block, const uint8_t *buf) {
+    uint32_t lba = ext2_lba + block * (block_size / 512);
+    for (int i = 0; i < block_size / 512; i++)
+        disk_write_sector(lba + i, buf + i * 512);
+}
+
+int ext2_write_file_overwrite(uint32_t inode_num, const uint8_t *data, int size) {
+    struct ext2_inode inode;
+    read_inode(inode_num, &inode);
+
+    int remaining = size;
+    int pos = 0;
+
+    for (int i = 0; i < 12 && remaining > 0; i++) {
+        if (!inode.block[i]) break;
+
+        uint8_t blockbuf[4096];
+        int chunk = (remaining > block_size) ? block_size : remaining;
+
+        memcpy(blockbuf, data + pos, chunk);
+        if (chunk < (int)block_size)
+            memset(blockbuf + chunk, 0, block_size - chunk);
+
+        write_block(inode.block[i], blockbuf);
+
+        pos += chunk;
+        remaining -= chunk;
+    }
+
+    inode.size = size;
+    // TODO: write inode back (you can add a write_inode() mirroring read_inode)
+    return pos;
+}
