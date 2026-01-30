@@ -2,6 +2,8 @@
 #include "net.h"
 #include "../drivers/vga.h"
 #include <string.h>
+#include "arp.h"
+#include "ipv4.h"
 
 static uint8_t our_mac[6] = {0x02,0x00,0x00,0x00,0x00,0x01}; // temp
 static uint32_t our_ip = 0;
@@ -27,17 +29,16 @@ int eth_send(uint8_t dst_mac[6], uint16_t type, const uint8_t *payload, int len)
     return net_send_raw(buf, 14 + len);
 }
 
-void eth_poll(void) {
-    uint8_t buf[1600];
-    int len = net_poll_raw(buf, sizeof(buf));
-    if (len <= 0) return;
+void eth_poll(void) { 
+    uint8_t buf[1600]; 
+    int len = net_poll_raw(buf, sizeof(buf)); 
+    if (len <= 0) return; 
 
-    struct eth_frame *f = (struct eth_frame*)buf;
-    uint16_t type = (f->type >> 8) | (f->type << 8); // ntohs
-
-    if (type == ETH_TYPE_ARP) {
-        extern void arp_handle(const uint8_t *frame, int len);
-        arp_handle(buf, len);
+    struct eth_frame *f = (struct eth_frame*)buf; 
+    uint16_t type = (f->type >> 8) | (f->type << 8); 
+    if (type == ETH_TYPE_ARP) { 
+        extern void arp_handle(const uint8_t *frame, int len); 
+        arp_handle(buf, len); 
+    } else if (type == ETH_TYPE_IPv4) { 
+        ipv4_handle(buf, len); } 
     }
-    // later: IPv4 handler
-}
