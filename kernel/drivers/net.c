@@ -4,6 +4,8 @@
 #include "ethernet.h" 
 #include "arp.h"
 #include "ipv4.h"
+#include "udp.h"
+#include "dns.h"
 
 void net_init(void) { 
     puts("net: init\n"); 
@@ -12,6 +14,7 @@ void net_init(void) {
     eth_set_ip(ip); 
     arp_init(ip); 
     ipv4_init(ip); 
+    udp_init();
 }
 
 int net_send_raw(const uint8_t *data, int len) {
