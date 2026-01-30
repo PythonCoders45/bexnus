@@ -24,6 +24,11 @@ kernel.bin: pm_switch.o kernel.o linker.ld
 bexnus.img: boot.bin kernel.bin
     cat boot.bin kernel.bin > bexnus.img
 
+bexnus.img:
+    dd if=/dev/zero of=bexnus.img bs=512 count=2880
+    mkfs.fat -F 12 bexnus.img
+    mcopy -i bexnus.img kernel.bin ::KERNEL.BIN
+
 run: bexnus.img
     qemu-system-i386 -drive format=raw,file=bexnus.img
 
