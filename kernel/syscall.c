@@ -47,3 +47,15 @@ static void syscall_handler(void) {
         "iret\n"
     );
 }
+
+static inline int sys_write(const char *s) {
+    int ret;
+    __asm__ volatile (
+        "mov $1, %%eax\n"
+        "mov %1, %%ebx\n"
+        "int $0x80\n"
+        "mov %%eax, %0\n"
+        : "=r"(ret) : "r"(s) : "eax", "ebx"
+    );
+    return ret;
+}

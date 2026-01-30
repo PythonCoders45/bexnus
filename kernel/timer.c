@@ -1,6 +1,7 @@
 // timer.c — PIT timer driver for Bexnus
 
 #include <stdint.h>
+#include "proc.h"
 
 extern void idt_set_gate(int n, uint32_t handler);
 extern void putc(char c);
@@ -17,15 +18,13 @@ static inline uint8_t inb(uint16_t port) {
     return ret;
 }
 
-void timer_handler(void) {
-    ticks++;
+void timer_handler(void) { 
+    ticks++; 
 
-    // Optional: print a dot every second
-    if (ticks % 100 == 0) {
-        putc('.');
-    }
+    if (ticks % 10 == 0) { 
+        sched_tick(); 
+    } 
 }
-
 void timer_init(void) {
     // PIT runs at 1,193,180 Hz
     uint32_t divisor = 1193180 / 100; // 100 Hz

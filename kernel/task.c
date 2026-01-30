@@ -1,6 +1,8 @@
 // task.c — cooperative multitasking
 
 #include <stdint.h>
+#include "vga.h" 
+#include "proc.h"
 
 #define MAX_TASKS 8
 
@@ -36,4 +38,20 @@ void task_yield(void) {
     current = next;
 
     switch_task(&tasks[old].esp, tasks[next].esp);
+}
+
+
+void task_a(void) {
+    while (1) {
+        puts("A")
+        for (volatile int i = 0; i < 1000000; i++)
+        proc_yield();
+    }
+}
+void task_b(void) {
+    while (1) {
+        puts("B")
+        for (volatile int i = 0; i < 1000000; i++)
+        proc_yield();
+    }
 }
