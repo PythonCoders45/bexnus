@@ -50,6 +50,15 @@ void shell_execute(const char *cmd) {
     else if (strncmp(cmd, "cd ", 3) == 0) cmd_cd(cmd + 3);
 
     else if (strcmp(cmd, "pwd") == 0) cmd_pwd("");
+    else if (strncmp(cmd, "cp ", 3) == 0) cmd_cp(cmd + 3);
+    else if (strcmp(cmd, "tree") == 0) cmd_tree("");
+    else if (strncmp(cmd, "tree ", 5) == 0) cmd_tree(cmd + 5);
+    else if (strncmp(cmd, "find ", 5) == 0) cmd_find(cmd + 5);
+    else if (strncmp(cmd, "grep ", 5) == 0) cmd_grep(cmd + 5);
+    else if (strncmp(cmd, "edit ", 5) == 0) cmd_edit(cmd + 5);
+    else if (strcmp(cmd, "save") == 0) cmd_save("");
+    else if (strcmp(cmd, "load") == 0) cmd_load("");
+
 
     else puts("Unknown command");
 }
