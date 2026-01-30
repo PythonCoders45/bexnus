@@ -30,6 +30,7 @@ void cmd_run(int argc, char **argv);
 // networking
 void cmd_ping(int argc, char **argv);
 // later: void cmd_netget(int argc, char **argv);
+void cmd_netget(int argc, char **argv);
 
 // === Command table (defined in cmds.c or shell.c) ===
 extern struct command_entry command_table[];

@@ -21,6 +21,7 @@ struct command_entry command_table[] = {
     // networking
     { "ping",  cmd_ping },
     // { "netget", cmd_netget }, // soon
+    { "netget", cmd_netget },
 
     { 0, 0 } // end of table
 };
