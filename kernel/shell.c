@@ -1,64 +1,27 @@
-// shell.c — Bexnus shell
+#include "../cmds/cmds.h"
 
-#include <stdint.h>
-#include <string.h>
+void shell_run(void) {
+    char line[256];
+    char *argv[16];
+    int argc;
 
-#include "../cmds/cmd.h"      // <-- THIS is where the include goes
-#include "vga.h"
-#include "timer.h"
+    while (1) {
+        shell_readline(line);
+        cmd_parse(line, &argc, argv);
 
-static char input[128];
-static int input_len = 0;
+        if (argc == 0)
+            continue;
 
-void shell_handle_char(char c) {
-    if (c == '\n') {
-        input[input_len] = 0;
-        putc('\n');
-        shell_execute(input);
-        input_len = 0;
-        puts("> ");
-        return;
+        int found = 0;
+        for (int i = 0; command_table[i].name; i++) {
+            if (strcmp(argv[0], command_table[i].name) == 0) {
+                command_table[i].func(argc, argv);
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found)
+            puts("unknown command\n");
     }
-
-    if (input_len < 127) {
-        input[input_len++] = c;
-        putc(c);
-    }
-}
-
-void shell_execute(const char *cmd) {
-    if (strncmp(cmd, "echo ", 5) == 0) cmd_echo(cmd + 5);
-    else if (strcmp(cmd, "clear") == 0) cmd_clear("");
-    else if (strcmp(cmd, "help") == 0) cmd_help("");
-    else if (strcmp(cmd, "uptime") == 0) cmd_uptime("");
-    else if (strcmp(cmd, "panic") == 0) cmd_panic("");
-    else if (strcmp(cmd, "mem") == 0) cmd_mem("");
-    else if (strcmp(cmd, "test") == 0) cmd_test("");
-    else if (strcmp(cmd, "ls") == 0) cmd_ls("");
-    else if (strncmp(cmd, "ls ", 3) == 0) cmd_ls(cmd + 3);
-
-    else if (strncmp(cmd, "cat ", 4) == 0) cmd_cat(cmd + 4);
-
-    else if (strncmp(cmd, "touch ", 6) == 0) cmd_touch(cmd + 6);
-
-    else if (strncmp(cmd, "rm ", 3) == 0) cmd_rm(cmd + 3);
-
-    else if (strncmp(cmd, "mkdir ", 6) == 0) cmd_mkdir(cmd + 6);
-
-    else if (strncmp(cmd, "mv ", 3) == 0) cmd_mv(cmd + 3);
-
-    else if (strncmp(cmd, "cd ", 3) == 0) cmd_cd(cmd + 3);
-
-    else if (strcmp(cmd, "pwd") == 0) cmd_pwd("");
-    else if (strncmp(cmd, "cp ", 3) == 0) cmd_cp(cmd + 3);
-    else if (strcmp(cmd, "tree") == 0) cmd_tree("");
-    else if (strncmp(cmd, "tree ", 5) == 0) cmd_tree(cmd + 5);
-    else if (strncmp(cmd, "find ", 5) == 0) cmd_find(cmd + 5);
-    else if (strncmp(cmd, "grep ", 5) == 0) cmd_grep(cmd + 5);
-    else if (strncmp(cmd, "edit ", 5) == 0) cmd_edit(cmd + 5);
-    else if (strcmp(cmd, "save") == 0) cmd_save("");
-    else if (strcmp(cmd, "load") == 0) cmd_load("");
-
-
-    else puts("Unknown command");
 }
