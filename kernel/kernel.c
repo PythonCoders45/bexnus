@@ -13,6 +13,7 @@
 #include "drivers/vga.h" 
 #include "drivers/pci.h" 
 #include "drivers/net.h"
+#include "drivers/icmp.h"
 
 // Write a character to VGA text mode memory
 static void putc(int row, int col, char c) {
@@ -24,13 +25,14 @@ static void putc(int row, int col, char c) {
 
 void kmain(void) {
     clear_screen();
-
+    
     paging_init();
     idt_init();
     pic_remap();
     tss_ini(0x9FFFF0);
     sched_init();
     syscall_init();
+    
 
     timer_init();
     pic_unmask_irq(0);
@@ -45,6 +47,11 @@ void kmain(void) {
     proc_spawn(task_b);
     
     net_init();
+
+    for (volatile int i = 0; i < 10000000; i++);
+
+    uint32_t dst = (8) | (8 << 8) | (8 << 16) | (8 << 24); 
+    icmp_ping(dst, 4);
 
     for (;;)
         __asm__ volatile ("hlt");
