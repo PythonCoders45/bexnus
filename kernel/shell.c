@@ -34,5 +34,22 @@ void shell_execute(const char *cmd) {
     else if (strcmp(cmd, "panic") == 0) cmd_panic("");
     else if (strcmp(cmd, "mem") == 0) cmd_mem("");
     else if (strcmp(cmd, "test") == 0) cmd_test("");
+    else if (strcmp(cmd, "ls") == 0) cmd_ls("");
+    else if (strncmp(cmd, "ls ", 3) == 0) cmd_ls(cmd + 3);
+
+    else if (strncmp(cmd, "cat ", 4) == 0) cmd_cat(cmd + 4);
+
+    else if (strncmp(cmd, "touch ", 6) == 0) cmd_touch(cmd + 6);
+
+    else if (strncmp(cmd, "rm ", 3) == 0) cmd_rm(cmd + 3);
+
+    else if (strncmp(cmd, "mkdir ", 6) == 0) cmd_mkdir(cmd + 6);
+
+    else if (strncmp(cmd, "mv ", 3) == 0) cmd_mv(cmd + 3);
+
+    else if (strncmp(cmd, "cd ", 3) == 0) cmd_cd(cmd + 3);
+
+    else if (strcmp(cmd, "pwd") == 0) cmd_pwd("");
+
     else puts("Unknown command");
 }
