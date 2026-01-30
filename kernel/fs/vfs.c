@@ -2,6 +2,7 @@
 #define BEXNUS_VFS_H
 
 #include <stdint.h>
+#include "ext2.h"
 
 typedef enum {
     NODE_FILE,
@@ -32,5 +33,23 @@ int vfs_read(const char *path, char *buf, int max);
 int vfs_write(const char *path, const char *buf);
 
 void vfs_list(const char *path);
+
+static struct vfs_node *ext2_root = 0;
+
+struct vfs_node *vfs_mount_ext2(const char *mountpoint, uint32_t lba_start) {
+    if (ext2_mount(lba_start) < 0) return 0;
+
+    struct vfs_node *m = vfs_create(mountpoint, NODE_DIR);
+    ext2_root = m;
+    return m;
+}
+
+int vfs_read_ext2(const char *path, char *buf, int max) {
+    // path like "/ext2/..."
+    if (strncmp(path, "/ext2/", 6) != 0) return -1;
+    const char *sub = path + 5; // keep leading '/'
+
+    return ext2_read_file(sub, (uint8_t*)buf, max);
+}
 
 #endif
